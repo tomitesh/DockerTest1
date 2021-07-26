@@ -1,0 +1,17 @@
+version: '3.4'
+
+services:
+  shopping.api:
+    container_name: shoppingapi
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+     - "8000:80"
+
+  shopping.client:
+    container_name: shoppingClient
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "ShoppingAPIUrl=http://shoppingapi"
+    ports:
+     - "8001:80"

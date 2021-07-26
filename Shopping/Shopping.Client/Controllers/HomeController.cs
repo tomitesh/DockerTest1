@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Shopping.Client.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Shopping.Client.Controllers
@@ -12,15 +14,20 @@ namespace Shopping.Client.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly HttpClient httpClient;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IHttpClientFactory httpClientFactory)
         {
             _logger = logger;
+            this.httpClient = httpClientFactory.CreateClient("API");
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var response = await httpClient.GetAsync("WeatherForecast");
+            var data = await response.Content.ReadAsStringAsync();
+            var weatherData = JsonConvert.DeserializeObject<IEnumerable<WeatherForecast>>(data);
+            return View(weatherData);
         }
 
         public IActionResult Privacy()
